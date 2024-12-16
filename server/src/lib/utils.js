@@ -14,10 +14,3 @@ export const generateJWT = (userID, res) => {
 
   return token;
 };
-
-export const imageToBase64 = (image) => {
-  const imageBuffer = Buffer.from(image, "binary");
-  const base64Image = imageBuffer.toString("base64");
-
-  return base64Image;
-};

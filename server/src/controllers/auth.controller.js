@@ -43,7 +43,7 @@ export const signup = async (req, res) => {
       res.status(400).json({ message: "Invalid user data" });
     }
   } catch (error) {
-    console.log("Error in signup controller", error.message);
+    console.log("Error in signup controller,", error.message);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
@@ -77,7 +77,7 @@ export const login = async (req, res) => {
       profilePic: user.profilePic,
     });
   } catch (error) {
-    console.log("Error in login controller, ", error.message);
+    console.log("Error in login controller,", error.message);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
@@ -87,30 +87,41 @@ export const logout = (_req, res) => {
     res.cookie(process.env.JWT_COOKIE_NAME, "", { maxAge: 0 });
     res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
-    console.log("Error in logout controller, ", error.message);
+    console.log("Error in logout controller,", error.message);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
-
-export const updateProfile = async(req, res) => {
+export const updateProfile = async (req, res) => {
   try {
-    const {profilePic} = req.body;
+    const profilePic = req.file;
 
     if (!req.user) {
-      return res.status(401).json({message: "Unauthorized - No User Defined"})
+      return res
+        .status(401)
+        .json({ message: "Unauthorized - No User Defined" });
     }
 
     if (!profilePic) {
-      return res.status(400).json({message: "Profile picture is required"})
+      return res.status(400).json({ message: "Profile picture is required" });
     }
 
-    const userID = req.user._id;
+    if (profilePic.size > 4 * 1024 * 1024) {
+      return res.status(400).json({ message: "Image too large" });
+    }
 
-    res.status(200).json({image: imageToBase64(profilePic)});
+    const fileContent = profilePic.buffer.toString("base64");
+    const mimeType = profilePic.mimetype;
+    const base64Image = `data:${mimeType};base64,${fileContent}`;
 
+    await User.findOneAndUpdate(
+      { _id: req.user._id }, 
+      { profilePic: base64Image }
+    );
+
+    res.status(200).json({ image: base64Image });
   } catch (error) {
-    console.log("Error in update profile controller, ", error.message);
+    console.log("Error in update profile controller,", error.message);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
