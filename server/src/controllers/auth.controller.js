@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import { generateJWT } from "../lib/utils.js";
+import { generateJWT, multerFileToBase64 } from "../lib/utils.js";
 import User from "../models/user.model.js";
 
 export const signup = async (req, res) => {
@@ -110,18 +110,41 @@ export const updateProfile = async (req, res) => {
       return res.status(400).json({ message: "Image too large" });
     }
 
-    const fileContent = profilePic.buffer.toString("base64");
-    const mimeType = profilePic.mimetype;
-    const base64Image = `data:${mimeType};base64,${fileContent}`;
+    const base64Image = multerFileToBase64(profilePic);
 
-    await User.findOneAndUpdate(
-      { _id: req.user._id }, 
-      { profilePic: base64Image }
-    );
+    if (!base64Image) {
+      return res.status(400).json({ message: "Invalid file format" });
+    }
 
-    res.status(200).json({ image: base64Image });
+    // Find the user by ID, update the profilePic and return the updated user (without password)
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      { profilePic: base64Image },
+      { new: true }
+    ).select("-password");
+
+    res.status(200).json(updatedUser);
   } catch (error) {
     console.log("Error in update profile controller,", error.message);
     res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const checkAuth = (req, res) => {
+  try {
+    req.user.profilePic = undefined;
+    res.status(200).json(req.user);
+  } catch (error) {
+    console.log("Error in checkAuth controller,", error.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const getProfilePic = (req, res) => {
+  try {
+    res.status(200).json({ profilePic: req.user.profilePic });
+  } catch (error) {
+    console.log("Error in getProfilePic controller,", error.message);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
