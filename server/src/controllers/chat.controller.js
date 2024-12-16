@@ -31,7 +31,7 @@ export const getMessagesBetweenUsers = async (req, res) => {
 
     res.status(200).json(messages);
   } catch (error) {
-    console.log("Error in getMessagesBetweenUsers controller,", error.message);
+    console.log("Error in getMessagesBetweenUsers controller:", error.message);
     res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -81,9 +81,9 @@ export const sendMessage = async (req, res) => {
 
     // TODO: real-time functionallity (socket.io)
 
-    res.status(200).json(newMessage);
+    res.status(201).json(newMessage);
   } catch (error) {
-    console.log("Error in sendMessage controller,", error.message);
+    console.log("Error in sendMessage controller:", error.message);
     res.status(500).json({ message: "Internal server error" });
   }
 };
