@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 
@@ -13,11 +14,15 @@ const app = express();
 
 app.use(express.json()); // Allows to extract the JSON from requests
 app.use(cookieParser());
+app.use(cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true
+}));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/chat", chatRoutes);
 
 app.listen(PORT, () => {
-  console.log(`server is running on PORT:${PORT}`);
-  connectDB();
+    console.log(`server is running on PORT:${PORT}`);
+    connectDB();
 });
