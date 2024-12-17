@@ -1,4 +1,3 @@
-import { MongooseError } from "mongoose";
 import Message from "../models/message.model.js";
 import User from "../models/user.model.js";
 import { multerFileToBase64 } from "../lib/utils.js";
@@ -38,7 +37,7 @@ export const getMessagesBetweenUsers = async (req, res) => {
 
 export const sendMessage = async (req, res) => {
   try {
-    const image = req.file;
+    const imageFile = req.file;
     const { text, id: receiverId } = req.body;
     const senderId = req.user._id;
 
@@ -59,15 +58,15 @@ export const sendMessage = async (req, res) => {
     }
 
     // Each messages requires an image, a text or both
-    if (!image && !text) {
+    if (!imageFile && !text) {
       return res
         .status(400)
         .json({ message: "Message missing image and text" });
     }
 
     let base64Image = null;
-    if (image) {
-      base64Image = multerFileToBase64(image);
+    if (imageFile) {
+      base64Image = multerFileToBase64(imageFile);
     }
 
     const newMessage = new Message({
