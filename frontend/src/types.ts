@@ -29,7 +29,7 @@ type LoginForm = {
 };
 
 type AuthStore = {
-    authUser: any;
+    authUser: UserModel | null;
     isSigningUp: boolean;
     isLoggingIn: boolean;
     isUpdatingProfile: boolean;
