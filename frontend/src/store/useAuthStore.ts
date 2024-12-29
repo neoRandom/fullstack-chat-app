@@ -34,7 +34,7 @@ export const useAuthStore: UseBoundStore<StoreApi<AuthStore>> = create(
 
                 toast.success("Account created successfully");
             } catch (error: any) {
-                toast.error(error.message);
+                toast.error(error.response.data.message);
             } finally {
                 set({ isSigningUp: false });
             }
@@ -46,7 +46,7 @@ export const useAuthStore: UseBoundStore<StoreApi<AuthStore>> = create(
                 set({ authUser: null });
                 toast.success("Logged out successfully");
             } catch (error: any) {
-                toast.error(error.message);
+                toast.error(error.response.data.message);
             }
         },
 
@@ -60,7 +60,7 @@ export const useAuthStore: UseBoundStore<StoreApi<AuthStore>> = create(
 
                 toast.success("Logged In Successfully");
             } catch (error: any) {
-                toast.error(error.message);
+                toast.error(error.response.data.message);
             } finally {
                 set({ isLoggingIn: false });
             }
