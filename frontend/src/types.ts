@@ -1,3 +1,22 @@
+type UserModel = {
+    _id: string;
+    email: string;
+    fullName: string;
+    profilePic: string;
+    createdAt: string;
+    updatedAt: string;
+};
+
+type MessageModel = {
+    _id: string;
+    senderId: string;
+    receiverId: string;
+    text: string | null;
+    image: string | null;
+    createdAt: string;
+    updatedAt: string;
+};
+
 type SignUpForm = {
     fullName: string;
     email: string;
@@ -30,4 +49,11 @@ type AuthImagePatternParams = {
     subtitle: string;
 };
 
-export type { SignUpForm, LoginForm, AuthStore, AuthImagePatternParams };
+export type {
+    UserModel,
+    MessageModel,
+    SignUpForm,
+    LoginForm,
+    AuthStore,
+    AuthImagePatternParams,
+};
