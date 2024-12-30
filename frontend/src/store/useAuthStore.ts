@@ -13,11 +13,18 @@ export const useAuthStore: UseBoundStore<StoreApi<AuthStore>> = create(
 
         checkAuth: async () => {
             try {
-                const res = await axiosInstance.get("/auth/check");
+                set({ isCheckingAuth: true });
 
-                set({ authUser: res.data });
-            } catch (error) {
-                console.log("Error in checkAuth:", error);
+                const checkResponse = await axiosInstance.get("/auth/check");
+                const imageResponse = await axiosInstance.get(
+                    "/auth/profile-pic"
+                );
+
+                checkResponse.data.profilePic = imageResponse.data.profilePic;
+
+                set({ authUser: checkResponse.data });
+            } catch (error: any) {
+                console.log("Error in checkAuth:", error.message);
                 set({ authUser: null });
             } finally {
                 set({ isCheckingAuth: false });
@@ -50,7 +57,7 @@ export const useAuthStore: UseBoundStore<StoreApi<AuthStore>> = create(
             }
         },
 
-        login: async(data) => {
+        login: async (data) => {
             try {
                 set({ isLoggingIn: true });
 
@@ -64,6 +71,25 @@ export const useAuthStore: UseBoundStore<StoreApi<AuthStore>> = create(
             } finally {
                 set({ isLoggingIn: false });
             }
-        }
+        },
+
+        updateProfile: async (data) => {
+            try {
+                set({ isUpdatingProfile: true });
+
+                const response = await axiosInstance.post(
+                    "/auth/update-profile",
+                    data
+                );
+
+                set({ authUser: response.data });
+
+                toast.success("Profile updated Successfully");
+            } catch (error: any) {
+                toast.error(error.response.data.message);
+            } finally {
+                set({ isUpdatingProfile: false });
+            }
+        },
     })
 );

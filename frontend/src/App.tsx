@@ -13,6 +13,7 @@ import { Toaster } from "react-hot-toast";
 const App = () => {
     const { authUser, isCheckingAuth, checkAuth }: any = useAuthStore();
 
+    // TODO: explain wtf this do
     useEffect(() => {
         checkAuth();
     }, [checkAuth]);
