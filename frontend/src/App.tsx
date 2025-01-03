@@ -9,11 +9,16 @@ import SettingsPage from "./pages/SettingsPage";
 import ProfilePage from "./pages/ProfilePage";
 import { useAuthStore } from "./store/useAuthStore";
 import { Toaster } from "react-hot-toast";
+import { useThemeStore } from "./store/useThemeStore";
 
 const App = () => {
     const { authUser, isCheckingAuth, checkAuth }: any = useAuthStore();
 
-    // TODO: explain wtf this do
+    const { setTheme } = useThemeStore();
+    useEffect(() => setTheme(), [setTheme]);
+
+    // --TODO: explain wtf this do--
+    // Runs the function once, and then runs again when the checkAuth function changes (probably never)
     useEffect(() => {
         checkAuth();
     }, [checkAuth]);
@@ -43,9 +48,7 @@ const App = () => {
                     path="/login"
                     element={!authUser ? <LoginPage /> : <Navigate to="/" />}
                 />
-                <Route 
-                    path="/settings" element={<SettingsPage />} 
-                />
+                <Route path="/settings" element={<SettingsPage />} />
                 <Route
                     path="/profile"
                     element={

@@ -46,6 +46,12 @@ type AuthStore = {
     updateProfile: (data: FormData) => Promise<void | any>;
 };
 
+type ThemeStore = {
+    theme: string;
+
+    setTheme: (theme?: string) => void
+}
+
 type AuthImagePatternParams = {
     title: string;
     subtitle: string;
@@ -57,5 +63,6 @@ export type {
     SignUpForm,
     LoginForm,
     AuthStore,
+    ThemeStore,
     AuthImagePatternParams,
 };
