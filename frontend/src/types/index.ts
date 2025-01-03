@@ -28,10 +28,6 @@ type LoginForm = {
     password: string;
 };
 
-type UpdateProfileForm = {
-    image: File
-}
-
 type AuthStore = {
     authUser: UserModel | null;
     isSigningUp: boolean;
@@ -47,7 +43,7 @@ type AuthStore = {
 
     login: (data: LoginForm) => Promise<void>;
 
-    updateProfile: (data: UpdateProfileForm) => Promise<void>;
+    updateProfile: (data: FormData) => Promise<void | any>;
 };
 
 type AuthImagePatternParams = {

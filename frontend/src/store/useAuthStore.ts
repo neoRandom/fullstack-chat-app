@@ -77,7 +77,7 @@ export const useAuthStore: UseBoundStore<StoreApi<AuthStore>> = create(
             try {
                 set({ isUpdatingProfile: true });
 
-                const response = await axiosInstance.post(
+                const response = await axiosInstance.put(
                     "/auth/update-profile",
                     data
                 );
@@ -85,6 +85,8 @@ export const useAuthStore: UseBoundStore<StoreApi<AuthStore>> = create(
                 set({ authUser: response.data });
 
                 toast.success("Profile updated Successfully");
+
+                return response.data;
             } catch (error: any) {
                 toast.error(error.response.data.message);
             } finally {

@@ -1,13 +1,27 @@
-import { ChangeEvent } from "react";
+import { ChangeEvent, useState } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import { Camera, Mail, User } from "lucide-react";
 
 const ProfilePage = () => {
     const { authUser, isUpdatingProfile, updateProfile } = useAuthStore();
 
-    let selectedImg = "";
+    let [selectedImg, setSelectedImage] = useState("");
 
-    const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {};
+    const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files) return;
+
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append("profilePic", file)
+
+        const res = await updateProfile(formData);
+
+        if (!res) return;
+
+        setSelectedImage(res.profilePic);
+    };
 
     return (
         <div className="h-screen pt-20">
@@ -24,7 +38,11 @@ const ProfilePage = () => {
                         <div className="relative">
                             <img
                                 loading="lazy"
-                                src={authUser?.profilePic || "/avatar.png"}
+                                src={
+                                    selectedImg ||
+                                    authUser?.profilePic ||
+                                    "/avatar.png"
+                                }
                                 alt="Profile"
                                 className="size-32 rounded-full object-cover border-4 "
                             />
