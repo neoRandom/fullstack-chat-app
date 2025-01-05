@@ -34,6 +34,7 @@ type AuthStore = {
     isLoggingIn: boolean;
     isUpdatingProfile: boolean;
     isCheckingAuth: boolean;
+    onlineUsers: Array<string>;
 
     checkAuth: () => Promise<void>;
 
@@ -44,13 +45,37 @@ type AuthStore = {
     login: (data: LoginForm) => Promise<void>;
 
     updateProfile: (data: FormData) => Promise<void | any>;
+
+    connectSocket: () => void;
+
+    disconnectSocket: () => void;
 };
 
 type ThemeStore = {
     theme: string;
 
-    setTheme: (theme?: string) => void
-}
+    setTheme: (theme?: string) => void;
+};
+
+type ChatStore = {
+    messages: Array<MessageModel>;
+    users: Array<UserModel>;
+    selectedUser: null | UserModel;
+    isUsersLoading: boolean;
+    isMessagesLoading: boolean;
+
+    getUsers: () => Promise<void>;
+
+    getMessages: (userId: string) => Promise<void>;
+
+    sendMessage: (messageData: FormData) => Promise<void>;
+
+    subscribeToMessages: () => void;
+
+    unsubscribeFromMessages: () => void;
+
+    setSelectedUser: (selectedUser: UserModel | null) => void;
+};
 
 type AuthImagePatternParams = {
     title: string;
@@ -64,5 +89,6 @@ export type {
     LoginForm,
     AuthStore,
     ThemeStore,
+    ChatStore,
     AuthImagePatternParams,
 };

@@ -8,6 +8,15 @@ import { useAuthStore } from "../store/useAuthStore";
 import { formatMessageTime } from "../lib/utils";
 
 const ChatContainer = () => {
+    const { messages, getMessages, isMessagesLoading, selectedUser } =
+        useChatStore();
+    const { authUser } = useAuthStore();
+    const messageEndRef = useRef(null);
+
+    // selectedUser will not be null because of the conditional at HomePage.tsx
+    useEffect(() => {
+        getMessages(selectedUser!._id);
+    }, [selectedUser!._id]);
 
     if (isMessagesLoading) {
         return (
@@ -28,7 +37,7 @@ const ChatContainer = () => {
                     <div
                         key={message._id}
                         className={`chat ${
-                            message.senderId === authUser._id
+                            message.senderId === authUser!._id
                                 ? "chat-end"
                                 : "chat-start"
                         }`}
@@ -38,10 +47,10 @@ const ChatContainer = () => {
                             <div className="size-10 rounded-full border">
                                 <img
                                     src={
-                                        message.senderId === authUser._id
-                                            ? authUser.profilePic ||
+                                        message.senderId === authUser!._id
+                                            ? authUser!.profilePic ||
                                               "/avatar.png"
-                                            : selectedUser.profilePic ||
+                                            : selectedUser!.profilePic ||
                                               "/avatar.png"
                                     }
                                     alt="profile pic"
