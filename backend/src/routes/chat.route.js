@@ -1,9 +1,9 @@
 import express from "express";
 import multer from "multer";
 import {
-  getMessagesBetweenUsers,
-  getUsersForSidebar,
-  sendMessage,
+    getMessagesBetweenUsers,
+    getUsersForSidebar,
+    sendMessage,
 } from "../controllers/chat.controller.js";
 import { protectRoute } from "../middleware/auth.middleware.js";
 

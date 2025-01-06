@@ -8,15 +8,32 @@ import { useAuthStore } from "../store/useAuthStore";
 import { formatMessageTime } from "../lib/utils";
 
 const ChatContainer = () => {
-    const { messages, getMessages, isMessagesLoading, selectedUser } =
+    const { messages, getMessages, subscribeToMessages, unsubscribeFromMessages, isMessagesLoading, selectedUser } =
         useChatStore();
     const { authUser } = useAuthStore();
-    const messageEndRef = useRef(null);
+
+    const containerBody: React.MutableRefObject<HTMLDivElement | null> =
+        useRef(null);
 
     // selectedUser will not be null because of the conditional at HomePage.tsx
     useEffect(() => {
         getMessages(selectedUser!._id);
-    }, [selectedUser!._id]);
+
+        subscribeToMessages();
+
+        // Clean up function
+        return () => unsubscribeFromMessages();
+    }, [selectedUser!._id, getMessages, subscribeToMessages, unsubscribeFromMessages]);
+
+    // Scrolling down each time a message is loaded
+    useEffect(() => {
+        if (containerBody.current && messages)
+            containerBody.current.scrollTo({
+                left: 0,
+                top: containerBody.current.scrollHeight,
+                behavior: "smooth",
+            });
+    }, [messages]);
 
     if (isMessagesLoading) {
         return (
@@ -32,7 +49,10 @@ const ChatContainer = () => {
         <div className="flex-1 flex flex-col overflow-auto">
             <ChatHeader />
 
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            <div
+                className="flex-1 overflow-y-auto p-4 space-y-4"
+                ref={containerBody}
+            >
                 {messages.map((message) => (
                     <div
                         key={message._id}
@@ -41,7 +61,6 @@ const ChatContainer = () => {
                                 ? "chat-end"
                                 : "chat-start"
                         }`}
-                        ref={messageEndRef}
                     >
                         <div className=" chat-image avatar">
                             <div className="size-10 rounded-full border">

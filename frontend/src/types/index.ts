@@ -1,3 +1,5 @@
+import { Socket } from "socket.io-client";
+
 type UserModel = {
     _id: string;
     email: string;
@@ -35,6 +37,7 @@ type AuthStore = {
     isUpdatingProfile: boolean;
     isCheckingAuth: boolean;
     onlineUsers: Array<string>;
+    socket: null | Socket;
 
     checkAuth: () => Promise<void>;
 

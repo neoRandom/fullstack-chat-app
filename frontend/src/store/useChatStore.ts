@@ -2,7 +2,7 @@ import { create, StoreApi, UseBoundStore } from "zustand";
 import toast from "react-hot-toast";
 import { axiosInstance } from "../lib/axios";
 import { useAuthStore } from "./useAuthStore";
-import { ChatStore } from "../types";
+import { ChatStore, MessageModel } from "../types";
 
 export const useChatStore: UseBoundStore<StoreApi<ChatStore>> = create(
     (set, get) => ({
@@ -52,9 +52,32 @@ export const useChatStore: UseBoundStore<StoreApi<ChatStore>> = create(
             }
         },
 
-        subscribeToMessages: () => {},
+        subscribeToMessages: () => {
+            const { selectedUser } = get();
 
-        unsubscribeFromMessages: () => {},
+            if (!selectedUser) return;
+
+            const socket = useAuthStore.getState().socket; // getState is the vanilla (non-Reactive) way to retrieve data
+
+            if (!socket) return;
+
+            socket.on("newMessage", (newMessage: MessageModel) => {
+                const isMessageSentFromSelectedUser =
+                    newMessage.senderId === selectedUser._id;
+
+                if (!isMessageSentFromSelectedUser) return;
+
+                set({ messages: [...get().messages, newMessage] });
+            });
+        },
+
+        unsubscribeFromMessages: () => {
+            const socket = useAuthStore.getState().socket;
+
+            if (!socket) return;
+
+            socket.off("newMessage");
+        },
 
         setSelectedUser: (selectedUser) => set({ selectedUser }),
     })

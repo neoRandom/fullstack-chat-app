@@ -1,7 +1,10 @@
 import { create, StoreApi, UseBoundStore } from "zustand";
 import { axiosInstance } from "../lib/axios";
 import { AuthStore } from "../types";
+import { io } from "socket.io-client";
 import toast from "react-hot-toast";
+
+const BASE_URL = "http://localhost:5001";
 
 export const useAuthStore: UseBoundStore<StoreApi<AuthStore>> = create(
     (set, get) => ({
@@ -18,6 +21,10 @@ export const useAuthStore: UseBoundStore<StoreApi<AuthStore>> = create(
                 set({ isCheckingAuth: true });
 
                 const checkResponse = await axiosInstance.get("/auth/check");
+
+                if (checkResponse.status === 200 && get().authUser !== null)
+                    return;
+                
                 const imageResponse = await axiosInstance.get(
                     "/auth/profile-pic"
                 );
@@ -25,6 +32,8 @@ export const useAuthStore: UseBoundStore<StoreApi<AuthStore>> = create(
                 checkResponse.data.profilePic = imageResponse.data.profilePic;
 
                 set({ authUser: checkResponse.data });
+
+                get().connectSocket();
             } catch (error: any) {
                 console.log("Error in checkAuth:", error.message);
                 set({ authUser: null });
@@ -42,6 +51,8 @@ export const useAuthStore: UseBoundStore<StoreApi<AuthStore>> = create(
                 set({ authUser: response.data });
 
                 toast.success("Account created successfully");
+
+                get().connectSocket();
             } catch (error: any) {
                 toast.error(error.response.data.message);
             } finally {
@@ -54,6 +65,8 @@ export const useAuthStore: UseBoundStore<StoreApi<AuthStore>> = create(
                 await axiosInstance.post("/auth/logout");
                 set({ authUser: null });
                 toast.success("Logged out successfully");
+
+                get().disconnectSocket();
             } catch (error: any) {
                 toast.error(error.response.data.message);
             }
@@ -68,6 +81,8 @@ export const useAuthStore: UseBoundStore<StoreApi<AuthStore>> = create(
                 set({ authUser: response.data });
 
                 toast.success("Logged In Successfully");
+
+                get().connectSocket();
             } catch (error: any) {
                 toast.error(error.response.data.message);
             } finally {
@@ -97,21 +112,24 @@ export const useAuthStore: UseBoundStore<StoreApi<AuthStore>> = create(
         },
 
         connectSocket: () => {
-            // const { authUser } = get();
-            // if (!authUser || get().socket?.connected) return;
-            // const socket = io(BASE_URL, {
-            //     query: {
-            //         userId: authUser._id,
-            //     },
-            // });
-            // socket.connect();
-            // set({ socket: socket });
-            // socket.on("getOnlineUsers", (userIds) => {
-            //     set({ onlineUsers: userIds });
-            // });
+            const { authUser } = get();
+            if (!authUser || get().socket?.connected) return;
+
+            const socket = io(BASE_URL, {
+                query: {
+                    userId: authUser._id,
+                },
+            });
+            socket.connect();
+            
+            set({ socket: socket });
+
+            socket.on("getOnlineUsers", (userIds) => {
+                set({ onlineUsers: userIds });
+            });
         },
         disconnectSocket: () => {
-            // if (get().socket?.connected) get().socket.disconnect();
+            if (get().socket?.connected) get().socket?.disconnect();
         },
     })
 );
