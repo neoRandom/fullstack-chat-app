@@ -67,7 +67,7 @@ const MessageInput = () => {
                         <button
                             onClick={removeImage}
                             className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-base-300
-                  flex items-center justify-center"
+                                flex items-center justify-center"
                             type="button"
                         >
                             <X className="size-3" />
@@ -83,7 +83,7 @@ const MessageInput = () => {
                 <div className="flex-1 flex gap-2">
                     <input
                         type="text"
-                        className="w-full input input-bordered rounded-lg input-sm sm:input-md"
+                        className="w-full input input-bordered rounded-lg input-md"
                         placeholder="Type a message..."
                         value={text}
                         onChange={(e) => setText(e.target.value)}
@@ -98,7 +98,7 @@ const MessageInput = () => {
 
                     <button
                         type="button"
-                        className={`hidden sm:flex btn btn-circle
+                        className={`flex btn btn-circle
                          ${
                              imagePreview ? "text-emerald-500" : "text-zinc-400"
                          }`}
@@ -109,10 +109,10 @@ const MessageInput = () => {
                 </div>
                 <button
                     type="submit"
-                    className="btn btn-sm btn-circle"
+                    className="btn btn-sm btn-circle box-content p-1.5"
                     disabled={!text.trim() && !imagePreview}
                 >
-                    <Send size={22} />
+                    <Send size={20} />
                 </button>
             </form>
         </div>
