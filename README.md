@@ -3,10 +3,20 @@
 ### Made with:
 
 - Front-end:
-    - ...
+    - Vite
+    - React
+    - Lucid React
+    - TypeScript
+    - TailwindCSS
+    - Zustand
+    - DaisyUI
 
 - Back-end:
-    - ...
+    - Node
+    - Express
+    - Multer
+    - Mongoose
+    - MongoDB
 
 ### Gallery:
 
