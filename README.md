@@ -6,15 +6,18 @@
     - Vite
     - React
     - Lucid React
+    - Hot Toaster
     - TypeScript
-    - TailwindCSS
     - Zustand
+    - TailwindCSS
     - DaisyUI
+    - Axios
 
 - Back-end:
     - Node
     - Express
     - Multer
+    - Socket.io
     - Mongoose
     - MongoDB
 
